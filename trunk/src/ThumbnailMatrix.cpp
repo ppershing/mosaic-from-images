@@ -164,8 +164,10 @@ void ThumbnailMatrix::initializeMatrix(SDL_Surface* surface, int
     int tileWidth = Cache::getTileWidth(subdivision);
     int tileHeight = Cache::getTileHeight(subdivision);
 
-    Assert(w*tileWidth <= surface->w, "");
-    Assert(h*tileHeight <= surface->h, "");
+    Assert(w*tileWidth <= surface->w,
+            "The width of source image is too small");
+    Assert(h*tileHeight <= surface->h,
+            "The height of source image is too small");
 
     width = w;
     height = h;
