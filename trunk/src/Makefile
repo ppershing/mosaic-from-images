@@ -1,7 +1,7 @@
-INC=  -I../include -I/usr/include/SDL
+INC=  -I../include -I/usr/include/SDL -I/usr/include
 CFLAGS= -W -Wall -pedantic -O2 ${INC} -pg -g 
 CFLAGS= -W -Wall -pedantic -O3 ${INC} -g \
-	-finline-functions -fomit-frame-pointers
+	-finline-functions
 CC=g++
 LDIR=../lib
 LIBS=-lSDLmain\
