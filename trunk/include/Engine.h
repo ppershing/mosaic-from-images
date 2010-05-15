@@ -1,3 +1,5 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #ifndef H_ENGINE
 #define H_ENGINE
 #include "Project.h"
@@ -13,7 +15,7 @@ class Engine{
 
     private:
         void handleEvents();
-        void doWork();
+        int doWork();
         void saveWork();
         Project* project;
         Preferences preferences;

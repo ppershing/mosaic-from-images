@@ -1,3 +1,5 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #include "ProgressStatistics.h"
 #include "MyStringUtils.h"
 
@@ -13,11 +15,11 @@ void ProgressStatistics::clearIncremental(){
 }
 
 double ProgressStatistics::getAverageEnhancement(){
-    return -totalChange/(imagesProcessed+0.01);
+    return -totalChange/(imagesProcessed+1e-10);
 }
 
-double ProgressStatistics::estimateFinalDiff(int images_remaining){
-    return total - images_remaining*getAverageEnhancement();
+double ProgressStatistics::getTotalDistance(){
+    return total;
 }
 
 std::string ProgressStatistics::getStatistics(){
@@ -30,7 +32,8 @@ std::string ProgressStatistics::getStatistics(){
   result += MyStringUtils::doubleToString(totalChange,0);
   result += "/" + MyStringUtils::doubleToString(total,0);
   result += " avg: ";
-  result += MyStringUtils::doubleToString(totalChange/(imagesChanged+0.01));
+  result +=
+      MyStringUtils::doubleToString(totalChange/(imagesChanged+1e-10));
   
   return result;
 }

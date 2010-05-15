@@ -1,10 +1,16 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #include "Engine.h"
 #include "SDL.h"
 
 #include "Debug.h"
 #include "MyStringUtils.h"
+#include <stdlib.h>
+#include <time.h>
 
 void Engine::initialize() {
+    DEBUG("initializing random number generator");
+    srand(time(NULL));
     DEBUG("load global preferences");
 
     preferences.loadFromFile("Mosaic.ini");
@@ -45,11 +51,17 @@ void Engine::handleEvents(){
                 break;
             case SDL_MOUSEMOTION:
                 break;
+            case SDL_MOUSEBUTTONDOWN:
+                project->mouseClick(event.button.x, event.button.y);
+            case SDL_MOUSEBUTTONUP:
+                break;
+            case SDL_VIDEOEXPOSE:
+                break;
+            case SDL_SYSWMEVENT:
+                break;
             case SDL_VIDEORESIZE:
-             int w = event.resize.w;
-             int h = event.resize.h;
             
-              SDL_SetVideoMode(w, h, 32, SDL_SWSURFACE|SDL_RESIZABLE);
+              SDL_SetVideoMode(event.resize.w, event.resize.h, 32, SDL_SWSURFACE|SDL_RESIZABLE);
               break;
             default:
                 Errors::_addError("unhandled event", Errors::WARNING);
@@ -57,9 +69,10 @@ void Engine::handleEvents(){
     }
 }
 
-void Engine::doWork(){
-    project->fitNextImage();
+int Engine::doWork(){
+    int ret = project->fitNextImage();
     timer.tick();
+    return ret;
 }
 
 void Engine::saveWork(){
@@ -78,10 +91,13 @@ void Engine::runMainLoop(){
     while(run){
         tick++;
         handleEvents();
-        doWork();
+        int didWork = doWork();
+        if (!didWork) run=0;
         saveWork();
-        if (tick % 2 == 0) {
-            printf("FPS: %f\n", timer.getFPS());
+        if (tick % 30 == 0) {
+            double fps=timer.getFPS();
+            printf("FPS: %f, ETA %.1f hours\n", fps,
+                    project->numRemainingImages()/fps/3600.0);
         }
     }
 }

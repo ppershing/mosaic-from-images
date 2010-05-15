@@ -1,9 +1,12 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #include "Project.h"
 #include "MyAssert.h"
-#include "SDL_image.h"
+#include "/usr/include/SDL/SDL_image.h"
 #include "MyStringUtils.h"
 #include <vector>
 #include <string>
+#include <algorithm>
 #include "Debug.h"
 #include "Bitmap.h"
 #include "Errors.h"
@@ -87,7 +90,9 @@ void Project::loadMapping(){
         }
     }
     progressStatistics.clearIncremental();
-    DEBUG("done");
+    thumbnailMatrix.recomputeSubdivisionFitCutoffs();
+
+    DEBUG("loading done");
 }
 
 void Project::createOutputSurface(){
@@ -165,14 +170,32 @@ void Project::saveOutput(){
     SDL_FreeSurface(tmpSurface);
 }
 
+void Project::mouseClick(int x,int y){
+    SDL_Surface* videoSurface = SDL_GetVideoSurface();
+    double tw = Cache::getTileWidth(outputDivision);
+    double th = Cache::getTileHeight(outputDivision);
+    double zoomX =  tw*tilesX / (double)videoSurface->w;
+    double zoomY =  th*tilesY / (double)videoSurface->h;
+    double zoom = std::max(zoomX, zoomY);
+    x *= zoom/tw;
+    y *= zoom/th;
+    printf("%s\n",thumbnailMatrix.getCellSummary(x,y).c_str());
+}
+
+int Project::numRemainingImages(){
+    return cache->getSize() - skipImages.size();
+}
+
 void Project::showStatistics(){
     thumbnailMatrix.saveFitData("statistics.txt");
 
     DEBUG(progressStatistics.getStatistics());
-    DEBUG("estimated final value " +
+    DEBUG("Num remaining images: " +
+            MyStringUtils::intToString(numRemainingImages()));
+    DEBUG("per image average distance: "+
             MyStringUtils::doubleToString(
-                progressStatistics.estimateFinalDiff(
-                    cache->getSize()-skipImages.size())));
+                progressStatistics.getTotalDistance()/
+                tilesX /tilesY));
     progressStatistics.clearIncremental();
 
     thumbnailMatrix.recomputeSubdivisionFitCutoffs();
@@ -189,7 +212,7 @@ void Project::save(){
 }
 
 
-void Project::fitNextImage(){
+int Project::fitNextImage(){
     int id=cacheEnumerationId;
     int internalCnt=0;
     Assert(cacheEnumeration.size(), "empy cache enum");
@@ -198,8 +221,10 @@ void Project::fitNextImage(){
                 cacheEnumeration[id])) {
         id = (id+1) % cacheEnumeration.size();
         internalCnt++;
-        Assert(internalCnt <= cacheEnumeration.size(),
-                "skipping whole cache");
+        if (internalCnt > cacheEnumeration.size()) {
+            DEBUG("nothing to do, all images placed");
+            return 0; // no other work, we are done
+        }
     }
 
     std::string hash = cacheEnumeration[id];
@@ -217,8 +242,12 @@ void Project::fitNextImage(){
     int bx=-1;
     int by=-1;
 
+    double INSTANT_PLACE = -5000; // speedup process, this is extremal
+    // fit
+
     for (int x = 0; x < tilesX; x++)
         for (int y = 0; y < tilesY; y++) {
+            if (best < INSTANT_PLACE) break;
             int ok=1;
             ColorAdjust adjust;
 
@@ -239,8 +268,9 @@ void Project::fitNextImage(){
                 }
 
                 //                printf("optimize subdiv %d\n",subdiv);
-                optimizerFunction.setBitmaps(&stack.stack[subdiv],
-                        &thumbnailMatrix.getData(x,y).stackData.stack[subdiv]);
+                optimizerFunction.setBitmaps(
+                        &thumbnailMatrix.getData(x,y).stackData.stack[subdiv],
+                        &stack.stack[subdiv]);
 
                 int iter = 2 + (ThumbnailStack::SIZE - subdiv)*2;
                 adjust.variables = optimizer.optimize(adjust.variables,
@@ -284,4 +314,5 @@ void Project::fitNextImage(){
     //printf("best fit %8.2f at %d %d\n",best,bx,by);
     
     cacheEnumerationId = id;
+    return 1; // we have still work to do
 }

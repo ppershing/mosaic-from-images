@@ -1,3 +1,5 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #ifndef H_PROGRESS_STATISTICS
 #define H_PROGRESS_STATISTICS
 
@@ -10,7 +12,7 @@ class ProgressStatistics {
         std::string getStatistics();
         void nextImage(double delta);
         double getAverageEnhancement();
-        double estimateFinalDiff(int images_remaining);
+        double getTotalDistance();
     private:
         int imagesProcessed;
         int imagesChanged;
