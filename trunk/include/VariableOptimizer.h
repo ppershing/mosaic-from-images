@@ -1,3 +1,5 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #ifndef H_VARIABLE_OPTIMIZER
 #define H_VARIABLE_OPTIMIZER
 

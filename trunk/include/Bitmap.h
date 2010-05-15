@@ -1,6 +1,8 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #ifndef H_BITMAP
 #define H_BITMAP
-#include "SDL.h"
+#include "SDL/SDL.h"
 #include <vector>
 #include "ColorAdjust.h"
 

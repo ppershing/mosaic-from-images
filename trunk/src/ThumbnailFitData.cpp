@@ -1,3 +1,5 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #include "ThumbnailFitData.h"
 #include "ThumbnailStack.h"
 #include "MyStringUtils.h"

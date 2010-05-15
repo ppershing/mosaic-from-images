@@ -1,3 +1,5 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #include "ColorAdjust.h"
 #include "NoAssert.h"
 #include "MyStringUtils.h"

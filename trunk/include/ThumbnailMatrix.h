@@ -1,3 +1,5 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #ifndef H_THUMBNAIL_MATRIX
 #define H_THUMBNAIL_MATRIX
 
@@ -32,6 +34,8 @@ class ThumbnailMatrix{
 
     bool canPlaceThumbnail(std::string hash);
 
+
+    std::string getCellSummary(int x,int y);
 
     std::string getMappingString(int x,int y);
 
