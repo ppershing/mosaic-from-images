@@ -206,7 +206,10 @@ void Project::showStatistics(){
 
 void Project::save(){
     DEBUG("saving...");
-    preferences.saveToFile(projectFile);
+    // do not save preferences as there are no modifications
+    // ant it will destroy coments.
+    //preferences.saveToFile(projectFile);
+
     skipImages.saveToFile(skipFile);
     thumbnailMapping.saveToFile(mappingFile);
 }
