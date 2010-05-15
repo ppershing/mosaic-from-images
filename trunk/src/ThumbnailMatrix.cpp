@@ -1,3 +1,5 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #include "ThumbnailMatrix.h"
 #include "Cache.h"
 #include "MyStringUtils.h"
@@ -5,6 +7,7 @@
 #include "Debug.h"
 #include <SDL/SDL.h>
 #include <fstream>
+#include <algorithm>
 
 bool ThumbnailMatrix::canPlaceThumbnail(std::string hash) {
   if (skip->haveKey(hash)) return false;
@@ -19,6 +22,21 @@ double ThumbnailMatrix::getImageFit(ThumbnailStack* stack,
             &matrix[x][y].stackData.stack[subdiv],
             &(stack->stack[subdiv]),
             adjust);
+}
+
+std::string ThumbnailMatrix::getCellSummary(int x,int y){
+    if (x>=width || y>=height) return "~~~~";
+
+ std::string summary;
+ summary = "Summary info for ";
+ summary+= MyStringUtils::intToString(x)+","+MyStringUtils::intToString(y);
+ summary+= " hash:";
+ summary+= matrix[x][y].fitData.thumbnailHash;
+ summary+= " adjust:";
+ summary+= matrix[x][y].fitData.adjust.toString();
+ summary+= " fit data:";
+ summary+= matrix[x][y].fitData.getFitStatistics();
+ return summary;
 }
 
 void ThumbnailMatrix::placeImageAt(std::string& hash, 
@@ -73,7 +91,13 @@ void ThumbnailMatrix::recomputeSubdivisionFitCutoffs(){
 
     sort(tmp.begin(), tmp.end());
     // remove 2 worst points
-    subdivisionFitCutoff[subdiv] = tmp[2];
+    double value=tmp[2];
+    if (subdiv) {
+        value = std::min(value, subdivisionFitCutoff[subdiv-1]);
+    }
+
+    
+    subdivisionFitCutoff[subdiv] = value;
     printf("Subdivision fit cutoff  %d = %.2f\n", subdiv,
             subdivisionFitCutoff[subdiv]);
   }
@@ -91,7 +115,12 @@ void ThumbnailMatrix::recomputeSubdivisionFitCutoffs(){
 
     sort(tmp.begin(), tmp.end());
     // remove 2 worst points
-    subdivisionFitCutoffOriginal[subdiv] = tmp[2];
+    double value=tmp[2];
+    if (subdiv) {
+        value = std::min(value, subdivisionFitCutoffOriginal[subdiv-1]);
+    }
+
+    subdivisionFitCutoffOriginal[subdiv] = value;
     printf("Subdivision fit cutoff original %d = %.2f\n", subdiv,
             subdivisionFitCutoffOriginal[subdiv]);
   }
@@ -134,7 +163,6 @@ void ThumbnailMatrix::initializeMatrix(SDL_Surface* surface, int
 
     int tileWidth = Cache::getTileWidth(subdivision);
     int tileHeight = Cache::getTileHeight(subdivision);
-    printf("%d %d %d\n",w, tileWidth, surface->w);
 
     Assert(w*tileWidth <= surface->w, "");
     Assert(h*tileHeight <= surface->h, "");
@@ -151,13 +179,10 @@ void ThumbnailMatrix::initializeMatrix(SDL_Surface* surface, int
             matrix[x][y].stackData.loadFromSurface(surface,
                     x * tileWidth, y * tileHeight, subdivision);
         }
-        printf("initializing matrix: %d / %d\n",x,width);
     }
 }
 
 ThumbnailMatrix::ThumbnailMatrix(){
   subdivisionFitCutoff.resize(ThumbnailStack::SIZE);
   subdivisionFitCutoffOriginal.resize(ThumbnailStack::SIZE);
-  for (int q=0; q<ThumbnailStack::SIZE; q++)
-      subdivisionFitCutoffOriginal[q]=-1000000.0;
 }

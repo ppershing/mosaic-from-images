@@ -1,8 +1,10 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #ifndef H_PROJECT
 #define H_PROJECT
 
 #include "Cache.h"
-#include "SDL.h"
+#include "SDL/SDL.h"
 #include <string>
 #include "Preferences.h"
 #include "ThumbnailMatrix.h"
@@ -13,6 +15,7 @@ class BitmapFitOptimizerFunction: public VariableOptimizerFunction {
  public:
      void setBitmaps(Bitmap* b1, Bitmap* b2);
      virtual double evaluate(std::vector<double> value);
+     virtual ~BitmapFitOptimizerFunction(){};
  private:
     Bitmap* b1;
     Bitmap* b2;
@@ -31,7 +34,9 @@ class Project{
     void saveOutput();
     void showStatistics();
 
-    void fitNextImage();
+    int fitNextImage();
+    int numRemainingImages();
+    void mouseClick(int x,int y);
   private:
     void loadImageStack();
     void loadMapping();
