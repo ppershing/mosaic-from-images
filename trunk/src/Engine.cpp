@@ -59,9 +59,12 @@ void Engine::handleEvents(){
                 break;
             case SDL_SYSWMEVENT:
                 break;
+            case SDL_ACTIVEEVENT:
+                break;
             case SDL_VIDEORESIZE:
             
-              SDL_SetVideoMode(event.resize.w, event.resize.h, 32, SDL_SWSURFACE|SDL_RESIZABLE);
+              SDL_SetVideoMode(event.resize.w, event.resize.h,
+                                32, SDL_SWSURFACE|SDL_RESIZABLE);
               break;
             default:
                 Errors::_addError("unhandled event", Errors::WARNING);
