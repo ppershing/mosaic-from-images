@@ -6,6 +6,7 @@
 #include "Exceptions.h"
 #include "NoDebug.h"
 
+#include <string.h>
 #include <iostream>
 #include <fstream>
 
@@ -56,7 +57,7 @@ Preferences::~Preferences(){
 void Preferences::addPreference(std::string s){ //throw (Exception)
     std::vector<std::string> v=MyStringUtils::splitString(s,":");
     if (v.size()!=2) throw Exception(std::string("Preferences:LoadFromFile "
-            " file is corrupted at line ")+s);
+            " file is corrupted at line ")+"'"+s+"'");
 
     DEBUG("Loaded key "+v[0]+"   value "+v[1]);
 
@@ -99,8 +100,13 @@ void Preferences::loadFromFile(const std::string& fileName){
     if (f.fail()) throw ECantOpenFile("Preferences:loadFromFile "
             "cant open file "+fileName);
     while (!f.eof()){
+        char tmp[1000];
         std::string s;
-        f>>s;
+        f.getline(tmp, 1000);
+        int l = strlen(tmp);
+        if (l>0 && tmp[l-1]=='\n') tmp[l-1]=0;
+
+        s=tmp;
         if (s=="") continue; // empty lines
         if (s[0]=='#') continue; // comments
 
