@@ -32,7 +32,8 @@ SEARCH_DIR="$2"
 touch $CACHE_DATA
 touch $SKIP_HASH_FILE
 mkdir $CACHE_DIR
-
+mkdir $CACHE_DIR/__
+cp __nothing.jpg $CACHE_DIR/__
 # internal counts
 CNT=0
 CNT_CACHED=0
