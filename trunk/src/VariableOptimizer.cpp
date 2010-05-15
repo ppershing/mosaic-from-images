@@ -1,3 +1,5 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #include "VariableOptimizer.h"
 #include "MyAssert.h"
 #include <cmath>
@@ -12,7 +14,7 @@ double VariableOptimizer::averageIterations(){
 void VariableOptimizer::initialize(std::vector<double> &min,
         std::vector<double> &max, VariableOptimizerFunction* function)
 {
-  STEP_MULT=0.2;
+  STEP_MULT=0.25;
   variables=min.size();
   Assert(max.size()==variables, "");
   this->min=min;
@@ -87,6 +89,7 @@ std::vector<double> VariableOptimizer::optimize(std::vector<double>
 
         step = sqrt(step);
 //        printf("step %f\n",step);
+//        printf("iteration %d fit %f\n",iteration, current);
     } while (step>min_step && iteration<max_iterations);
 
 //    printf("optimizer iterations %d\n",iteration);
