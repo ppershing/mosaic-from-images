@@ -101,7 +101,8 @@ void Preferences::loadFromFile(const std::string& fileName){
     while (!f.eof()){
         std::string s;
         f>>s;
-        if (s=="") continue;
+        if (s=="") continue; // empty lines
+        if (s[0]=='#') continue; // comments
 
         addPreference(s);
 
