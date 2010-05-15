@@ -1,3 +1,5 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #ifndef H_COLOR_ADJUST
 #define H_COLOR_ADJUST
 
