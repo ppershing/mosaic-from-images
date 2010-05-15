@@ -1,7 +1,9 @@
+// created and maintained by ppershing
+// please report any bug or suggestion to ppershing<>fks<>sk
 #include "CacheData.h"
 #include "MyAssert.h"
 
-const char* CacheData::CACHE_DIR = "cache";
+const char* CacheData::CACHE_DIR = "../data/cache";
 
 std::string CacheData::getThumbnailFile(){
   assert(hash.size() > 2);
