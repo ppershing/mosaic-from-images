@@ -192,11 +192,19 @@ void Project::showStatistics(){
     DEBUG(progressStatistics.getStatistics());
     DEBUG("Num remaining images: " +
             MyStringUtils::intToString(numRemainingImages()));
+    double imageDistance = progressStatistics.getTotalDistance()/
+                tilesX /tilesY;
     DEBUG("per image average distance: "+
-            MyStringUtils::doubleToString(
-                progressStatistics.getTotalDistance()/
-                tilesX /tilesY));
+            MyStringUtils::doubleToString(imageDistance));
+
+    double pixelDistance = imageDistance /
+        Cache::getTileWidth(tileDivision) /
+        Cache::getTileHeight(tileDivision);
+
     progressStatistics.clearIncremental();
+
+    DEBUG("per pixel average distance: "+
+            MyStringUtils::doubleToString(pixelDistance));
 
     thumbnailMatrix.recomputeSubdivisionFitCutoffs();
 
