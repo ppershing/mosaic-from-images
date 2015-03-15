@@ -1,0 +1,1 @@
+This program creates a big mosaic from number of downscaled images. It is meant mainly for linux and it is not intended to be user friendly
